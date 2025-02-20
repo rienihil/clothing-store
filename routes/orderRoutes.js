@@ -1,21 +1,7 @@
 const express = require("express");
 const Order = require("../models/Order");
-const jwt = require("jsonwebtoken");
+const { authMiddleware } = require("../middlewares/authMiddleware");
 const router = express.Router();
-
-const authMiddleware = (req, res, next) => {
-  const token = req.header("Authorization");
-  if (!token) return res.status(401).json({ error: "Нет доступа" });
-
-  try {
-    const decoded = jwt.verify(token.split(" ")[1], "secret_key");
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(403).json({ error: "Неверный токен" });
-  }
-};
-
 
 router.get("/", authMiddleware, async (req, res) => {
   try {

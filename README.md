@@ -50,11 +50,12 @@ This is a RESTful API for a clothing store, built using Node.js, Express, and Mo
 
 ### **Products**
 - **Get all products**: `GET /products`
-- **Create a product**: `POST /products`
-- **Delete a product**: `DELETE /products/:id`
+- **Create a product (admin only)**: `POST /products`
+- **Delete a product (admin only)**: `DELETE /products/:id`
 
 ### **Orders**
 - **Get user orders (requires authentication)**: `GET /orders`
+Users can only access their own orders.
 
 ## Authentication
 The API uses JWT for authentication. Users must send a Bearer Token in the `Authorization` header when accessing protected routes.

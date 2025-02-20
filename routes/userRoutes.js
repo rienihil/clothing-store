@@ -6,9 +6,13 @@ const router = express.Router();
 
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, role } = req.body;
+
+    const assignedRole = role === "admin" ? "user" : role;
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, email, password: hashedPassword });
+    const newUser = new User({ username, email, password: hashedPassword, role: assignedRole });
+
     await newUser.save();
     res.status(201).json({ message: "User registered successfully." });
   } catch (err) {
@@ -20,12 +24,14 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+
     if (!user) return res.status(400).json({ error: "User not found." });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Incorrect password." });
 
-    const token = jwt.sign({ userId: user._id }, "secret_key", { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id, role: user.role }, "secret_key", { expiresIn: "1h" });
+
     res.json({ token });
   } catch (err) {
     res.status(500).json({ error: err.message });
